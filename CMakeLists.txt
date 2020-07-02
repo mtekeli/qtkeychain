@@ -46,6 +46,17 @@ endif()
 if (Qt5Core_FOUND AND NOT BUILD_WITH_QT4)
   set(QTKEYCHAIN_VERSION_INFIX 5)
 
+  if(ANDROID)
+    if(Qt5Core_VERSION VERSION_LESS 5.7)
+      find_package(Qt5Core REQUIRED Private)
+      include_directories(${Qt5Core_PRIVATE_INCLUDE_DIRS})
+    endif()
+
+    find_package(Qt5AndroidExtras REQUIRED)
+    include_directories(${Qt5AndroidExtras_INCLUDE_DIRS})
+    set(QTANDROIDEXTRAS_LIBRARIES ${Qt5AndroidExtras_LIBRARIES})
+  endif()
+
   if(UNIX AND NOT APPLE AND NOT ANDROID AND NOT HAIKU)
     find_package(Qt5DBus REQUIRED)
     include_directories(${Qt5DBus_INCLUDE_DIRS})
@@ -152,6 +163,12 @@ if(HAIKU)
 
     find_library(BE_LIBRARY be REQUIRED)
     list(APPEND qtkeychain_LIBRARIES ${BE_LIBRARY})
+endif()
+
+if(ANDROID)
+    set(CMAKE_CXX_STANDARD 11)
+    list(APPEND qtkeychain_SOURCES keychain_android.cpp androidkeystore.cpp plaintextstore.cpp)
+    list(APPEND qtkeychain_LIBRARIES ${QTANDROIDEXTRAS_LIBRARIES} )
 endif()
 
 if(UNIX AND NOT APPLE AND NOT ANDROID AND NOT HAIKU)
