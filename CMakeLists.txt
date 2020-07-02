@@ -36,6 +36,10 @@ if (WIN32)
     if (USE_CREDENTIAL_STORE)
         add_definitions(-DUSE_CREDENTIAL_STORE=1)
     endif()
+
+    if(MSVC)
+        include(cmake/msvc-static-runtime.cmake)
+    endif()
 endif()
 
 if( NOT BUILD_WITH_QT4 )
@@ -123,7 +127,7 @@ set(qtkeychain_SOURCES
     keychain.h
 )
 
-add_definitions( -Wall )
+#add_definitions( -Wall )
 
 if(WIN32)
     list(APPEND qtkeychain_SOURCES keychain_win.cpp)
